@@ -9,9 +9,10 @@ interface GifSettingsType {
 interface GifSettingsProps {
 	settings: GifSettingsType;
 	onSettingsChange: (settings: GifSettingsType) => void;
+	onGlobalDelayChange: (delay: number) => void;
 }
 
-export function GifSettings({ settings, onSettingsChange }: GifSettingsProps) {
+export function GifSettings({ settings, onSettingsChange, onGlobalDelayChange }: GifSettingsProps) {
 	const updateSetting = (key: keyof GifSettingsType, value: number) => {
 		onSettingsChange({
 			...settings,
@@ -86,7 +87,8 @@ export function GifSettings({ settings, onSettingsChange }: GifSettingsProps) {
 			</div>
 
 			<div class="setting-group">
-				<h3>Default Frame Delay</h3>
+				<h3>Global Frame Delay</h3>
+				<p class="setting-description">Changes all frames using global delay</p>
 				<div class="delay-control">
 					<input
 						type="number"
@@ -94,7 +96,7 @@ export function GifSettings({ settings, onSettingsChange }: GifSettingsProps) {
 						min="50"
 						max="5000"
 						step="50"
-						onChange={(e) => updateSetting('globalDelay', parseInt(e.currentTarget.value))}
+						onChange={(e) => onGlobalDelayChange(parseInt(e.currentTarget.value))}
 					/>
 					<span>ms</span>
 				</div>

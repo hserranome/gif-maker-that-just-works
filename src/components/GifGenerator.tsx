@@ -1,10 +1,11 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import GIF from 'gif.js';
 
 interface Frame {
 	id: number;
 	image: string;
 	delay: number;
+	useGlobalDelay: boolean;
 }
 
 interface GifSettings {
@@ -18,9 +19,11 @@ interface GifSettings {
 interface GifGeneratorProps {
 	frames: Frame[];
 	settings: GifSettings;
+	autoUpdate?: boolean;
+	onRef?: (ref: { generateGif: () => void } | null) => void;
 }
 
-export function GifGenerator({ frames, settings }: GifGeneratorProps) {
+export function GifGenerator({ frames, settings, autoUpdate, onRef }: GifGeneratorProps) {
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [generatedGif, setGeneratedGif] = useState<string | null>(null);
@@ -80,9 +83,8 @@ export function GifGenerator({ frames, settings }: GifGeneratorProps) {
 				canvas.height = settings.height;
 
 				if (ctx) {
-					// Fill with white background
-					ctx.fillStyle = '#ffffff';
-					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					// Clear canvas with transparent background to preserve PNG transparency
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 					// Calculate aspect ratio to fit image
 					const aspectRatio = img.width / img.height;
@@ -117,6 +119,17 @@ export function GifGenerator({ frames, settings }: GifGeneratorProps) {
 			setIsGenerating(false);
 		}
 	};
+
+	useEffect(() => {
+		if (onRef) {
+			onRef({ generateGif });
+		}
+		return () => {
+			if (onRef) {
+				onRef(null);
+			}
+		};
+	}, [onRef]);
 
 	const downloadGif = () => {
 		if (generatedGif) {
