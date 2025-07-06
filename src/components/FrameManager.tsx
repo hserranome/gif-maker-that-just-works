@@ -53,25 +53,32 @@ export function FrameManager({ frames, onUpdateFrame, onRemoveFrame, onReorderFr
 									{frame.useGlobalDelay && <span class="global-indicator">(Global)</span>}
 								</div>
 								<div class="delay-control">
-									<label>Delay (ms):</label>
-									<input
-										type="number"
-										value={frame.delay}
-										min="50"
-										max="5000"
-										step="50"
-										disabled={frame.useGlobalDelay}
-										onChange={(e) => setCustomDelay(frame.id, parseInt(e.currentTarget.value))}
-									/>
-									{!frame.useGlobalDelay && (
-										<button 
-											class="reset-delay-button"
-											onClick={() => resetFrameDelay(frame.id)}
-											title="Reset to global delay"
-										>
-											Reset
-										</button>
-									)}
+									<div class="delay-input-group">
+										<label>Delay (ms):</label>
+										<input
+											type="number"
+											value={frame.delay}
+											min="50"
+											max="5000"
+											step="50"
+											disabled={frame.useGlobalDelay}
+											onChange={(e) => setCustomDelay(frame.id, parseInt(e.currentTarget.value))}
+										/>
+										<label class="delay-checkbox">
+											<input
+												type="checkbox"
+												checked={frame.useGlobalDelay}
+												onChange={(e) => {
+													if (e.currentTarget.checked) {
+														resetFrameDelay(frame.id);
+													} else {
+														setCustomDelay(frame.id, frame.delay);
+													}
+												}}
+											/>
+											Global
+										</label>
+									</div>
 								</div>
 								<div class="frame-actions">
 									{index > 0 && (

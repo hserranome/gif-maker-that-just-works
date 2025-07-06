@@ -156,8 +156,29 @@
 
 .delay-control {
 	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.delay-input-group {
+	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.delay-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-size: 0.8rem;
+	color: #666;
+	white-space: nowrap;
+}
+
+.delay-checkbox input[type="checkbox"] {
+	width: 1rem;
+	margin: 0;
 }
 
 .delay-control input {
