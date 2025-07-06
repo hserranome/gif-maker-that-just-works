@@ -1,39 +1,68 @@
-import preactLogo from '../../assets/preact.svg';
+import { useState } from 'preact/hooks';
+import { ImageUpload } from '../../components/ImageUpload';
+import { FrameManager } from '../../components/FrameManager';
+import { GifSettings } from '../../components/GifSettings';
+import { GifGenerator } from '../../components/GifGenerator';
 import './style.css';
 
 export function Home() {
-	return (
-		<div class="home">
-			<a href="https://preactjs.com" target="_blank">
-				<img src={preactLogo} alt="Preact logo" height="160" width="160" />
-			</a>
-			<h1>Get Started building Vite-powered Preact Apps </h1>
-			<section>
-				<Resource
-					title="Learn Preact"
-					description="If you're new to Preact, try the interactive tutorial to learn important concepts"
-					href="https://preactjs.com/tutorial"
-				/>
-				<Resource
-					title="Differences to React"
-					description="If you're coming from React, you may want to check out our docs to see where Preact differs"
-					href="https://preactjs.com/guide/v10/differences-to-react"
-				/>
-				<Resource
-					title="Learn Vite"
-					description="To learn more about Vite and how you can customize it to fit your needs, take a look at their excellent documentation"
-					href="https://vitejs.dev"
-				/>
-			</section>
-		</div>
-	);
-}
+	const [frames, setFrames] = useState([]);
+	const [settings, setSettings] = useState({
+		width: 400,
+		height: 400,
+		quality: 10,
+		globalDelay: 500,
+		repeat: 0
+	});
 
-function Resource(props) {
+	const addFrame = (imageData) => {
+		setFrames(prev => [...prev, {
+			id: Date.now(),
+			image: imageData,
+			delay: settings.globalDelay
+		}]);
+	};
+
+	const updateFrame = (id, updates) => {
+		setFrames(prev => prev.map(frame => 
+			frame.id === id ? { ...frame, ...updates } : frame
+		));
+	};
+
+	const removeFrame = (id) => {
+		setFrames(prev => prev.filter(frame => frame.id !== id));
+	};
+
+	const reorderFrames = (newFrames) => {
+		setFrames(newFrames);
+	};
+
 	return (
-		<a href={props.href} target="_blank" class="resource">
-			<h2>{props.title}</h2>
-			<p>{props.description}</p>
-		</a>
+		<div class="gif-maker">
+			<h1>GIF Maker That Just Works</h1>
+			
+			<div class="main-content">
+				<div class="left-panel">
+					<ImageUpload onImageAdd={addFrame} />
+					<FrameManager 
+						frames={frames}
+						onUpdateFrame={updateFrame}
+						onRemoveFrame={removeFrame}
+						onReorderFrames={reorderFrames}
+					/>
+				</div>
+				
+				<div class="right-panel">
+					<GifSettings 
+						settings={settings}
+						onSettingsChange={setSettings}
+					/>
+					<GifGenerator 
+						frames={frames}
+						settings={settings}
+					/>
+				</div>
+			</div>
+		</div>
 	);
 }
