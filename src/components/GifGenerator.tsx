@@ -43,7 +43,8 @@ export function GifGenerator({ frames, settings, autoUpdate, onRef }: GifGenerat
 				width: settings.width,
 				height: settings.height,
 				repeat: settings.repeat,
-				workerScript: '/gif.worker.js'
+				workerScript: '/gif.worker.js',
+				transparent: 0x00FF00 // Bright green as transparent
 			});
 
 			// Track progress
@@ -83,30 +84,84 @@ export function GifGenerator({ frames, settings, autoUpdate, onRef }: GifGenerat
 				canvas.height = settings.height;
 
 				if (ctx) {
-					// Clear canvas with transparent background to preserve PNG transparency
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					// Create a temporary canvas to check for transparency
+					const tempCanvas = document.createElement('canvas');
+					const tempCtx = tempCanvas.getContext('2d');
+					tempCanvas.width = img.width;
+					tempCanvas.height = img.height;
+					
+					let hasTransparency = false;
+					if (tempCtx) {
+						tempCtx.drawImage(img, 0, 0);
+						const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
+						const data = imageData.data;
+						
+						// Check if image has transparency
+						for (let i = 3; i < data.length; i += 4) {
+							if (data[i] < 255) {
+								hasTransparency = true;
+								break;
+							}
+						}
+					}
 
 					// Calculate aspect ratio to fit image
 					const aspectRatio = img.width / img.height;
 					const canvasAspectRatio = canvas.width / canvas.height;
 
-					let drawWidth, drawHeight, drawX, drawY;
+					let drawWidth: number, drawHeight: number, drawX: number, drawY: number;
 
 					if (aspectRatio > canvasAspectRatio) {
-						// Image is wider than canvas
 						drawWidth = canvas.width;
 						drawHeight = canvas.width / aspectRatio;
 						drawX = 0;
 						drawY = (canvas.height - drawHeight) / 2;
 					} else {
-						// Image is taller than canvas
 						drawHeight = canvas.height;
 						drawWidth = canvas.height * aspectRatio;
 						drawX = (canvas.width - drawWidth) / 2;
 						drawY = 0;
 					}
 
-					ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+					if (hasTransparency) {
+						// For transparent images: Draw on transparent canvas, then composite with green
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+						
+						// Enable high quality smoothing
+						ctx.imageSmoothingEnabled = true;
+						ctx.imageSmoothingQuality = 'high';
+						
+						// Draw image first on transparent background
+						ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+						
+						// Create a copy of the current canvas
+						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+						const data = imageData.data;
+						
+						// Fill transparent areas with green, but preserve edges
+						for (let i = 0; i < data.length; i += 4) {
+							const alpha = data[i + 3];
+							if (alpha === 0) { // Only fill completely transparent pixels
+								data[i] = 0;     // R = 0
+								data[i + 1] = 255; // G = 255 (green)
+								data[i + 2] = 0;   // B = 0
+								data[i + 3] = 255; // A = 255 (opaque)
+							}
+							// Leave semi-transparent pixels (anti-aliased edges) unchanged
+						}
+						
+						ctx.putImageData(imageData, 0, 0);
+					} else {
+						// For opaque images: use white background
+						ctx.fillStyle = '#FFFFFF';
+						ctx.fillRect(0, 0, canvas.width, canvas.height);
+						
+						// Enable high quality smoothing
+						ctx.imageSmoothingEnabled = true;
+						ctx.imageSmoothingQuality = 'high';
+						
+						ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+					}
 				}
 
 				gif.addFrame(canvas, { delay: frame.delay });

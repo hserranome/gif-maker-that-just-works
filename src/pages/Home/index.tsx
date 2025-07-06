@@ -19,12 +19,29 @@ export function Home() {
 	const gifGeneratorRef = useRef(null);
 
 	const addFrame = (imageData) => {
-		setFrames(prev => [...prev, {
-			id: Date.now(),
-			image: imageData,
-			delay: settings.globalDelay,
-			useGlobalDelay: true
-		}]);
+		setFrames(prev => {
+			const newFrame = {
+				id: Date.now(),
+				image: imageData,
+				delay: settings.globalDelay,
+				useGlobalDelay: true
+			};
+			
+			// If this is the first frame, auto-set canvas size to match image
+			if (prev.length === 0) {
+				const img = new Image();
+				img.onload = () => {
+					setSettings(currentSettings => ({
+						...currentSettings,
+						width: img.width,
+						height: img.height
+					}));
+				};
+				img.src = imageData;
+			}
+			
+			return [...prev, newFrame];
+		});
 	};
 
 	const updateFrame = (id, updates) => {
