@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { Frame, GifSettings } from '../types';
+import { create } from "zustand";
+import { Frame, GifSettings } from "../types";
 
 interface GifStore {
   // State
@@ -35,10 +35,9 @@ export const useGifStore = create<GifStore>((set, get) => ({
   settings: {
     width: 400,
     height: 400,
-    quality: 10,
+    imageSmoothingQuality: "high",
     globalDelay: 500,
     repeat: 0,
-    transparencyMode: 'discord'
   },
   autoUpdate: false,
   isGenerating: false,
@@ -52,7 +51,7 @@ export const useGifStore = create<GifStore>((set, get) => ({
       id: Date.now(),
       image: imageData,
       delay: settings.globalDelay,
-      useGlobalDelay: true
+      useGlobalDelay: true,
     };
 
     set({ frames: [...frames, newFrame] });
@@ -64,16 +63,16 @@ export const useGifStore = create<GifStore>((set, get) => ({
   },
 
   updateFrame: (id: number, updates: Partial<Frame>) => {
-    set(state => ({
-      frames: state.frames.map(frame =>
+    set((state) => ({
+      frames: state.frames.map((frame) =>
         frame.id === id ? { ...frame, ...updates } : frame
-      )
+      ),
     }));
   },
 
   removeFrame: (id: number) => {
-    set(state => ({
-      frames: state.frames.filter(frame => frame.id !== id)
+    set((state) => ({
+      frames: state.frames.filter((frame) => frame.id !== id),
     }));
   },
 
@@ -83,22 +82,22 @@ export const useGifStore = create<GifStore>((set, get) => ({
 
   // Settings actions
   updateSettings: (newSettings: Partial<GifSettings>) => {
-    set(state => ({
-      settings: { ...state.settings, ...newSettings }
+    set((state) => ({
+      settings: { ...state.settings, ...newSettings },
     }));
   },
 
   updateGlobalDelay: (delay: number) => {
     // Update settings
-    set(state => ({
-      settings: { ...state.settings, globalDelay: delay }
+    set((state) => ({
+      settings: { ...state.settings, globalDelay: delay },
     }));
 
     // Update all frames that use global delay
-    set(state => ({
-      frames: state.frames.map(frame =>
+    set((state) => ({
+      frames: state.frames.map((frame) =>
         frame.useGlobalDelay ? { ...frame, delay } : frame
-      )
+      ),
     }));
   },
 
@@ -121,9 +120,9 @@ export const useGifStore = create<GifStore>((set, get) => ({
     img.onload = () => {
       get().updateSettings({
         width: img.width,
-        height: img.height
+        height: img.height,
       });
     };
     img.src = imageData;
-  }
+  },
 }));

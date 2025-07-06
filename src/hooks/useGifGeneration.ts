@@ -1,19 +1,18 @@
 import { GIFEncoder, quantize, applyPalette } from "gifenc";
-import { useGifStore } from '../store/gifStore';
+import { useGifStore } from "../store/gifStore";
 
 export const useGifGeneration = () => {
-  const frames = useGifStore(state => state.frames);
-  const settings = useGifStore(state => state.settings);
-  const isGenerating = useGifStore(state => state.isGenerating);
-  const progress = useGifStore(state => state.progress);
-  const generatedGif = useGifStore(state => state.generatedGif);
-  const setGenerationState = useGifStore(state => state.setGenerationState);
-  const setGeneratedGif = useGifStore(state => state.setGeneratedGif);
+  const frames = useGifStore((state) => state.frames);
+  const settings = useGifStore((state) => state.settings);
+  const isGenerating = useGifStore((state) => state.isGenerating);
+  const progress = useGifStore((state) => state.progress);
+  const generatedGif = useGifStore((state) => state.generatedGif);
+  const setGenerationState = useGifStore((state) => state.setGenerationState);
+  const setGeneratedGif = useGifStore((state) => state.setGeneratedGif);
 
   const generateGif = async () => {
     if (frames.length === 0) return;
 
-    console.log("Starting minimal GIF generation with", frames.length, "frames");
     setGenerationState(true, 0);
     setGeneratedGif(null);
 
@@ -35,7 +34,7 @@ export const useGifGeneration = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d")!;
         ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
+        ctx.imageSmoothingQuality = settings.imageSmoothingQuality;
         canvas.width = settings.width;
         canvas.height = settings.height;
 
@@ -103,7 +102,8 @@ export const useGifGeneration = () => {
           palette,
           delay: frame.delay,
           transparent: transparentIndex >= 0,
-          transparentIndex: transparentIndex >= 0 ? transparentIndex : undefined,
+          transparentIndex:
+            transparentIndex >= 0 ? transparentIndex : undefined,
         });
       }
 
@@ -141,6 +141,6 @@ export const useGifGeneration = () => {
     isGenerating,
     progress,
     generatedGif,
-    framesCount: frames.length
+    framesCount: frames.length,
   };
 };

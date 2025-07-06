@@ -8,10 +8,9 @@ export interface Frame {
 export interface GifSettings {
   width: number;
   height: number;
-  quality: number;
+  imageSmoothingQuality: ImageSmoothingQuality;
   globalDelay: number;
   repeat: number;
-  transparencyMode: string;
 }
 
 export interface SizePreset {
