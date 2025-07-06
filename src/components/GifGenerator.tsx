@@ -1,244 +1,227 @@
-import { useState, useEffect } from 'preact/hooks';
-import GIF from 'gif.js';
+import { useState, useEffect } from "preact/hooks";
+import { GIFEncoder, quantize, applyPalette } from "gifenc";
 
 interface Frame {
-	id: number;
-	image: string;
-	delay: number;
-	useGlobalDelay: boolean;
+  id: number;
+  image: string;
+  delay: number;
+  useGlobalDelay: boolean;
 }
 
 interface GifSettings {
-	width: number;
-	height: number;
-	quality: number;
-	globalDelay: number;
-	repeat: number;
+  width: number;
+  height: number;
+  quality: number;
+  globalDelay: number;
+  repeat: number;
+  transparencyMode: string;
 }
 
 interface GifGeneratorProps {
-	frames: Frame[];
-	settings: GifSettings;
-	autoUpdate?: boolean;
-	onRef?: (ref: { generateGif: () => void } | null) => void;
+  frames: Frame[];
+  settings: GifSettings;
+  autoUpdate?: boolean;
+  onRef?: (ref: { generateGif: () => void } | null) => void;
 }
 
-export function GifGenerator({ frames, settings, autoUpdate, onRef }: GifGeneratorProps) {
-	const [isGenerating, setIsGenerating] = useState(false);
-	const [progress, setProgress] = useState(0);
-	const [generatedGif, setGeneratedGif] = useState<string | null>(null);
+export function GifGenerator({
+  frames,
+  settings,
+  autoUpdate,
+  onRef,
+}: GifGeneratorProps) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [generatedGif, setGeneratedGif] = useState<string | null>(null);
 
-	const generateGif = async () => {
-		if (frames.length === 0) return;
+  const generateGif = async () => {
+    if (frames.length === 0) return;
 
-		console.log('Starting GIF generation with', frames.length, 'frames');
-		setIsGenerating(true);
-		setProgress(0);
-		setGeneratedGif(null);
+    console.log(
+      "Starting minimal GIF generation with",
+      frames.length,
+      "frames"
+    );
+    setIsGenerating(true);
+    setProgress(0);
+    setGeneratedGif(null);
 
-		try {
-			const gif = new GIF({
-				workers: 2,
-				quality: settings.quality,
-				width: settings.width,
-				height: settings.height,
-				repeat: settings.repeat,
-				workerScript: '/gif.worker.js',
-				transparent: 0x00FF00 // Bright green as transparent
-			});
+    try {
+      // Create GIF encoder
+      const gif = GIFEncoder();
 
-			// Track progress
-			gif.on('progress', (p) => {
-				console.log('Progress:', Math.round(p * 100) + '%');
-				setProgress(Math.round(p * 100));
-			});
+      // Process each frame
+      for (let i = 0; i < frames.length; i++) {
+        const frame = frames[i];
+        setProgress((i / frames.length) * 80);
 
-			// Handle completion
-			gif.on('finished', (blob) => {
-				console.log('GIF generation finished, blob size:', blob.size);
-				const url = URL.createObjectURL(blob);
-				setGeneratedGif(url);
-				setIsGenerating(false);
-			});
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = frame.image;
+        });
 
-			// Handle errors
-			gif.on('abort', () => {
-				console.error('GIF generation aborted');
-				setIsGenerating(false);
-			});
+        // Create canvas
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        canvas.width = settings.width;
+        canvas.height = settings.height;
 
-			// Add frames to GIF
-			console.log('Adding frames to GIF...');
-			for (const frame of frames) {
-				const img = new Image();
-				await new Promise((resolve, reject) => {
-					img.onload = resolve;
-					img.onerror = reject;
-					img.src = frame.image;
-				});
+        // Clear canvas first
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-				// Create canvas to resize image
-				const canvas = document.createElement('canvas');
-				const ctx = canvas.getContext('2d');
-				canvas.width = settings.width;
-				canvas.height = settings.height;
+        // Calculate aspect ratio
+        const aspectRatio = img.width / img.height;
+        const canvasAspectRatio = canvas.width / canvas.height;
 
-				if (ctx) {
-					// Create a temporary canvas to check for transparency
-					const tempCanvas = document.createElement('canvas');
-					const tempCtx = tempCanvas.getContext('2d');
-					tempCanvas.width = img.width;
-					tempCanvas.height = img.height;
-					
-					let hasTransparency = false;
-					if (tempCtx) {
-						tempCtx.drawImage(img, 0, 0);
-						const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
-						const data = imageData.data;
-						
-						// Check if image has transparency
-						for (let i = 3; i < data.length; i += 4) {
-							if (data[i] < 255) {
-								hasTransparency = true;
-								break;
-							}
-						}
-					}
+        let drawWidth: number, drawHeight: number, drawX: number, drawY: number;
 
-					// Calculate aspect ratio to fit image
-					const aspectRatio = img.width / img.height;
-					const canvasAspectRatio = canvas.width / canvas.height;
+        if (aspectRatio > canvasAspectRatio) {
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / aspectRatio;
+          drawX = 0;
+          drawY = (canvas.height - drawHeight) / 2;
+        } else {
+          drawHeight = canvas.height;
+          drawWidth = canvas.height * aspectRatio;
+          drawX = (canvas.width - drawWidth) / 2;
+          drawY = 0;
+        }
 
-					let drawWidth: number, drawHeight: number, drawX: number, drawY: number;
+        // Draw image
+        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
 
-					if (aspectRatio > canvasAspectRatio) {
-						drawWidth = canvas.width;
-						drawHeight = canvas.width / aspectRatio;
-						drawX = 0;
-						drawY = (canvas.height - drawHeight) / 2;
-					} else {
-						drawHeight = canvas.height;
-						drawWidth = canvas.height * aspectRatio;
-						drawX = (canvas.width - drawWidth) / 2;
-						drawY = 0;
-					}
+        // Get image data and manually replace transparent pixels with magenta
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
 
-					if (hasTransparency) {
-						// For transparent images: Draw on transparent canvas, then composite with green
-						ctx.clearRect(0, 0, canvas.width, canvas.height);
-						
-						// Enable high quality smoothing
-						ctx.imageSmoothingEnabled = true;
-						ctx.imageSmoothingQuality = 'high';
-						
-						// Draw image first on transparent background
-						ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-						
-						// Create a copy of the current canvas
-						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-						const data = imageData.data;
-						
-						// Fill transparent areas with green, but preserve edges
-						for (let i = 0; i < data.length; i += 4) {
-							const alpha = data[i + 3];
-							if (alpha === 0) { // Only fill completely transparent pixels
-								data[i] = 0;     // R = 0
-								data[i + 1] = 255; // G = 255 (green)
-								data[i + 2] = 0;   // B = 0
-								data[i + 3] = 255; // A = 255 (opaque)
-							}
-							// Leave semi-transparent pixels (anti-aliased edges) unchanged
-						}
-						
-						ctx.putImageData(imageData, 0, 0);
-					} else {
-						// For opaque images: use white background
-						ctx.fillStyle = '#FFFFFF';
-						ctx.fillRect(0, 0, canvas.width, canvas.height);
-						
-						// Enable high quality smoothing
-						ctx.imageSmoothingEnabled = true;
-						ctx.imageSmoothingQuality = 'high';
-						
-						ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-					}
-				}
+        for (let i = 0; i < data.length; i += 4) {
+          const alpha = data[i + 3];
+          if (alpha === 0) {
+            // Replace transparent pixels with magenta
+            data[i] = 255; // R
+            data[i + 1] = 0; // G
+            data[i + 2] = 255; // B
+            data[i + 3] = 255; // A
+          }
+        }
 
-				gif.addFrame(canvas, { delay: frame.delay });
-			}
+        ctx.putImageData(imageData, 0, 0);
 
-			console.log('All frames added, starting render...');
-			gif.render();
-		} catch (error) {
-			console.error('Error generating GIF:', error);
-			setIsGenerating(false);
-		}
-	};
+        // Quantize without alpha processing to preserve all colors
+        const palette = quantize(imageData.data, 256, {
+          format: "rgb444",
+        });
 
-	useEffect(() => {
-		if (onRef) {
-			onRef({ generateGif });
-		}
-		return () => {
-			if (onRef) {
-				onRef(null);
-			}
-		};
-	}, [onRef]);
+        // Apply palette
+        const indices = applyPalette(imageData.data, palette, "rgb");
 
-	const downloadGif = () => {
-		if (generatedGif) {
-			const link = document.createElement('a');
-			link.href = generatedGif;
-			link.download = `animated-gif-${Date.now()}.gif`;
-			link.click();
-		}
-	};
+        // Find magenta index in palette for transparency
+        let transparentIndex = -1;
+        for (let i = 0; i < palette.length; i++) {
+          const [r, g, b] = palette[i];
+          if (r === 255 && g === 0 && b === 255) {
+            transparentIndex = i;
+            break;
+          }
+        }
 
-	return (
-		<div class="gif-generator">
-			<h2>Generate GIF</h2>
-			
-			{frames.length === 0 ? (
-				<p class="no-frames">Add some frames to generate a GIF</p>
-			) : (
-				<div class="generator-content">
-					<div class="generation-info">
-						<p>{frames.length} frames ready</p>
-						<p>Size: {settings.width}×{settings.height}</p>
-					</div>
+        // Write frame
+        gif.writeFrame(indices, settings.width, settings.height, {
+          palette,
+          delay: frame.delay,
+          transparent: transparentIndex >= 0,
+          transparentIndex:
+            transparentIndex >= 0 ? transparentIndex : undefined,
+        });
+      }
 
-					<button 
-						class="generate-button"
-						onClick={generateGif}
-						disabled={isGenerating}
-					>
-						{isGenerating ? `Generating... ${progress}%` : 'Generate GIF'}
-					</button>
+      setProgress(90);
 
-					{isGenerating && (
-						<div class="progress-bar">
-							<div 
-								class="progress-fill"
-								style={{ width: `${progress}%` }}
-							></div>
-						</div>
-					)}
+      // Finish and get bytes
+      gif.finish();
+      const buffer = gif.bytes();
 
-					{generatedGif && (
-						<div class="generated-gif">
-							<h3>Generated GIF</h3>
-							<img src={generatedGif} alt="Generated GIF" />
-							<button 
-								class="download-button"
-								onClick={downloadGif}
-							>
-								Download GIF
-							</button>
-						</div>
-					)}
-				</div>
-			)}
-		</div>
-	);
+      console.log("GIF created, size:", buffer.length);
+
+      // Create blob
+      const blob = new Blob([buffer], { type: "image/gif" });
+      const url = URL.createObjectURL(blob);
+      setGeneratedGif(url);
+      setIsGenerating(false);
+      setProgress(100);
+    } catch (error) {
+      console.error("Error generating GIF:", error);
+      setIsGenerating(false);
+    }
+  };
+
+  useEffect(() => {
+    if (onRef) {
+      onRef({ generateGif });
+    }
+    return () => {
+      if (onRef) {
+        onRef(null);
+      }
+    };
+  }, [onRef]);
+
+  const downloadGif = () => {
+    if (generatedGif) {
+      const link = document.createElement("a");
+      link.href = generatedGif;
+      link.download = `animated-gif-${Date.now()}.gif`;
+      link.click();
+    }
+  };
+
+  return (
+    <div class="gif-generator">
+      <h2>Generate GIF</h2>
+
+      {frames.length === 0 ? (
+        <p class="no-frames">Add some frames to generate a GIF</p>
+      ) : (
+        <div class="generator-content">
+          <div class="generation-info">
+            <p>{frames.length} frames ready</p>
+            <p>
+              Size: {settings.width}×{settings.height}
+            </p>
+          </div>
+
+          <button
+            class="generate-button"
+            onClick={generateGif}
+            disabled={isGenerating}
+          >
+            {isGenerating ? `Generating... ${progress}%` : "Generate GIF"}
+          </button>
+
+          {isGenerating && (
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          )}
+
+          {generatedGif && (
+            <div class="generated-gif">
+              <h3>Generated GIF</h3>
+              <img src={generatedGif} alt="Generated GIF" />
+              <button class="download-button" onClick={downloadGif}>
+                Download GIF
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }

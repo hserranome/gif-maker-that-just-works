@@ -12,7 +12,8 @@ export function Home() {
 		height: 400,
 		quality: 10,
 		globalDelay: 500,
-		repeat: 0
+		repeat: 0,
+		transparencyMode: 'discord' // 'discord' or 'standard'
 	});
 	const [autoUpdate, setAutoUpdate] = useState(false);
 	const debounceRef = useRef(null);

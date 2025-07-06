@@ -4,6 +4,7 @@ interface GifSettingsType {
 	quality: number;
 	globalDelay: number;
 	repeat: number;
+	transparencyMode: string;
 }
 
 interface GifSettingsProps {
@@ -100,6 +101,18 @@ export function GifSettings({ settings, onSettingsChange, onGlobalDelayChange }:
 					/>
 					<span>ms</span>
 				</div>
+			</div>
+
+			<div class="setting-group">
+				<h3>Transparency Mode</h3>
+				<p class="setting-description">Optimize for different platforms</p>
+				<select
+					value={settings.transparencyMode}
+					onChange={(e) => onSettingsChange({...settings, transparencyMode: e.currentTarget.value})}
+				>
+					<option value="discord">Discord Optimized</option>
+					<option value="standard">Standard Quality</option>
+				</select>
 			</div>
 
 			<div class="setting-group">
