@@ -1,0 +1,144 @@
+.container {
+  /* Component container styles if needed */
+}
+
+.title {
+  color: #673ab8;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.settingGroup {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #f8f8f8;
+  border-radius: 6px;
+}
+
+.settingGroup h3 {
+  margin: 0 0 0.5rem;
+  color: #673ab8;
+  font-size: 1rem;
+}
+
+.presetButtons {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.presetButtons button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.8rem;
+}
+
+.presetButtons button:hover,
+.presetButtons button.active {
+  background: #673ab8;
+  color: white;
+  border-color: #673ab8;
+}
+
+.customSize {
+  display: flex;
+  gap: 1rem;
+}
+
+.sizeInput {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sizeInput input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.qualityControl {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qualityControl input[type="range"] {
+  flex: 1;
+}
+
+.delayControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.delayControl input {
+  width: 100px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.settingGroup select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.settingDescription {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .title,
+  .settingGroup h3 {
+    color: #9575cd;
+  }
+
+  .settingGroup {
+    background: #2a2a2a;
+    color: #ccc;
+  }
+
+  .sizeInput input,
+  .delayControl input,
+  .settingGroup select {
+    background: #2a2a2a;
+    color: #ccc;
+    border-color: #666;
+  }
+
+  .presetButtons button {
+    background: #2a2a2a;
+    color: #ccc;
+    border-color: #666;
+  }
+
+  .settingDescription {
+    color: #ccc;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .customSize {
+    flex-direction: column;
+  }
+
+  .presetButtons {
+    justify-content: center;
+  }
+}

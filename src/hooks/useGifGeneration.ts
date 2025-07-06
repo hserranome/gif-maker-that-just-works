@@ -1,59 +1,28 @@
-import { useState, useEffect } from "preact/hooks";
 import { GIFEncoder, quantize, applyPalette } from "gifenc";
+import { useGifStore } from '../store/gifStore';
 
-interface Frame {
-  id: number;
-  image: string;
-  delay: number;
-  useGlobalDelay: boolean;
-}
-
-interface GifSettings {
-  width: number;
-  height: number;
-  quality: number;
-  globalDelay: number;
-  repeat: number;
-  transparencyMode: string;
-}
-
-interface GifGeneratorProps {
-  frames: Frame[];
-  settings: GifSettings;
-  autoUpdate?: boolean;
-  onRef?: (ref: { generateGif: () => void } | null) => void;
-}
-
-export function GifGenerator({
-  frames,
-  settings,
-  autoUpdate,
-  onRef,
-}: GifGeneratorProps) {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [generatedGif, setGeneratedGif] = useState<string | null>(null);
+export const useGifGeneration = () => {
+  const frames = useGifStore(state => state.frames);
+  const settings = useGifStore(state => state.settings);
+  const isGenerating = useGifStore(state => state.isGenerating);
+  const progress = useGifStore(state => state.progress);
+  const generatedGif = useGifStore(state => state.generatedGif);
+  const setGenerationState = useGifStore(state => state.setGenerationState);
+  const setGeneratedGif = useGifStore(state => state.setGeneratedGif);
 
   const generateGif = async () => {
     if (frames.length === 0) return;
 
-    console.log(
-      "Starting minimal GIF generation with",
-      frames.length,
-      "frames"
-    );
-    setIsGenerating(true);
-    setProgress(0);
+    console.log("Starting minimal GIF generation with", frames.length, "frames");
+    setGenerationState(true, 0);
     setGeneratedGif(null);
 
     try {
-      // Create GIF encoder
       const gif = GIFEncoder();
 
-      // Process each frame
       for (let i = 0; i < frames.length; i++) {
         const frame = frames[i];
-        setProgress((i / frames.length) * 80);
+        setGenerationState(true, (i / frames.length) * 80);
 
         const img = new Image();
         await new Promise((resolve, reject) => {
@@ -134,12 +103,11 @@ export function GifGenerator({
           palette,
           delay: frame.delay,
           transparent: transparentIndex >= 0,
-          transparentIndex:
-            transparentIndex >= 0 ? transparentIndex : undefined,
+          transparentIndex: transparentIndex >= 0 ? transparentIndex : undefined,
         });
       }
 
-      setProgress(90);
+      setGenerationState(true, 90);
 
       // Finish and get bytes
       gif.finish();
@@ -151,24 +119,12 @@ export function GifGenerator({
       const blob = new Blob([buffer], { type: "image/gif" });
       const url = URL.createObjectURL(blob);
       setGeneratedGif(url);
-      setIsGenerating(false);
-      setProgress(100);
+      setGenerationState(false, 100);
     } catch (error) {
       console.error("Error generating GIF:", error);
-      setIsGenerating(false);
+      setGenerationState(false, 0);
     }
   };
-
-  useEffect(() => {
-    if (onRef) {
-      onRef({ generateGif });
-    }
-    return () => {
-      if (onRef) {
-        onRef(null);
-      }
-    };
-  }, [onRef]);
 
   const downloadGif = () => {
     if (generatedGif) {
@@ -179,49 +135,12 @@ export function GifGenerator({
     }
   };
 
-  return (
-    <div class="gif-generator">
-      <h2>Generate GIF</h2>
-
-      {frames.length === 0 ? (
-        <p class="no-frames">Add some frames to generate a GIF</p>
-      ) : (
-        <div class="generator-content">
-          <div class="generation-info">
-            <p>{frames.length} frames ready</p>
-            <p>
-              Size: {settings.width}×{settings.height}
-            </p>
-          </div>
-
-          <button
-            class="generate-button"
-            onClick={generateGif}
-            disabled={isGenerating}
-          >
-            {isGenerating ? `Generating... ${progress}%` : "Generate GIF"}
-          </button>
-
-          {isGenerating && (
-            <div class="progress-bar">
-              <div
-                class="progress-fill"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          )}
-
-          {generatedGif && (
-            <div class="generated-gif">
-              <h3>Generated GIF</h3>
-              <img src={generatedGif} alt="Generated GIF" />
-              <button class="download-button" onClick={downloadGif}>
-                Download GIF
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+  return {
+    generateGif,
+    downloadGif,
+    isGenerating,
+    progress,
+    generatedGif,
+    framesCount: frames.length
+  };
+};
