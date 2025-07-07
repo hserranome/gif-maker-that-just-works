@@ -72,10 +72,12 @@
 @media (max-width: 768px) {
   .mainContent {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
   .container {
     padding: 0.5rem;
+    padding-bottom: 120px; /* Space for fixed generate button */
   }
   
   .title {
@@ -86,5 +88,102 @@
   .middlePanel,
   .rightPanel {
     gap: 1rem;
+  }
+
+  /* Mobile-specific expandable panels */
+  .mobileExpandablePanel {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+  }
+
+  .mobileExpandableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .mobileExpandableHeader:hover {
+    background: #f0f0f0;
+  }
+
+  .mobileExpandableTitle {
+    font-weight: bold;
+    color: #673ab8;
+    font-size: 1.1rem;
+  }
+
+  .mobileExpandableToggle {
+    font-size: 1.2rem;
+    color: #673ab8;
+    transition: transform 0.2s;
+  }
+
+  .mobileExpandableToggle.collapsed {
+    transform: rotate(-90deg);
+  }
+
+  .mobileExpandableContent {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .mobileExpandableContent.expanded {
+    max-height: 350px; /* Adjust based on content */
+    overflow-y: auto;
+  }
+
+  .mobileExpandableContent > div {
+    padding: 1rem;
+  }
+
+  /* Fixed generate button on mobile */
+  .mobileFixedGenerate {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #ddd;
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dark mode support for mobile panels */
+  @media (prefers-color-scheme: dark) {
+    .mobileExpandablePanel {
+      background: #1a1a1a;
+      border-color: #666;
+    }
+
+    .mobileExpandableHeader {
+      background: #2a2a2a;
+      border-color: #666;
+    }
+
+    .mobileExpandableHeader:hover {
+      background: #333;
+    }
+
+    .mobileExpandableTitle {
+      color: #9575cd;
+    }
+
+    .mobileExpandableToggle {
+      color: #9575cd;
+    }
+
+    .mobileFixedGenerate {
+      background: #1a1a1a;
+      border-color: #666;
+    }
   }
 }
