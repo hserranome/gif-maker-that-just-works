@@ -37,7 +37,6 @@ export const useGifStore = create<GifStore>((set, get) => ({
     height: 400,
     imageSmoothingQuality: "high",
     globalDelay: 500,
-    repeat: 0,
   },
   autoUpdate: false,
   isGenerating: false,

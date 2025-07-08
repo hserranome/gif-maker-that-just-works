@@ -10,7 +10,6 @@ export interface GifSettings {
   height: number;
   imageSmoothingQuality: ImageSmoothingQuality;
   globalDelay: number;
-  repeat: number;
 }
 
 export interface SizePreset {

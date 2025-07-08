@@ -99,9 +99,6 @@ export function GifSettings() {
 
       <div className={styles.settingGroup}>
         <h3>Global Frame Delay</h3>
-        <p className={styles.settingDescription}>
-          Changes all frames using global delay
-        </p>
         <div className={styles.delayControl}>
           <input
             type="number"
@@ -113,22 +110,6 @@ export function GifSettings() {
           />
           <span>ms</span>
         </div>
-      </div>
-
-      <div className={styles.settingGroup}>
-        <h3>Repeat</h3>
-        <select
-          value={settings.repeat}
-          onChange={(e) =>
-            updateSetting("repeat", parseInt(e.currentTarget.value))
-          }
-        >
-          <option value={0}>Loop forever</option>
-          <option value={1}>Play once</option>
-          <option value={2}>Play twice</option>
-          <option value={3}>Play 3 times</option>
-          <option value={-1}>No repeat</option>
-        </select>
       </div>
     </div>
   );
