@@ -5,6 +5,8 @@ import styles from './GifGenerator.module.css';
 
 export function GifGenerator() {
 	const settings = useGifStore(state => state.settings);
+	const autoUpdate = useGifStore(state => state.autoUpdate);
+	const setAutoUpdate = useGifStore(state => state.setAutoUpdate);
 	const {
 		generateGif,
 		downloadGif,
@@ -20,6 +22,17 @@ export function GifGenerator() {
 	return (
 		<div className={styles.container}>
 			<h2 className={styles.title}>Generate GIF</h2>
+			
+			<div className={styles.autoUpdateControl}>
+				<label className={styles.checkboxLabel}>
+					<input
+						type="checkbox"
+						checked={autoUpdate}
+						onChange={(e) => setAutoUpdate(e.currentTarget.checked)}
+					/>
+					Auto-generate
+				</label>
+			</div>
 
 			{framesCount === 0 ? (
 				<p className={styles.noFrames}>Add some frames to generate a GIF</p>

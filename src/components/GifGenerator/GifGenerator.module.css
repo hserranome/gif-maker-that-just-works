@@ -8,6 +8,23 @@
   font-size: 1.2rem;
 }
 
+.autoUpdateControl {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  margin: 0;
+}
+
 .generatorContent {
   display: flex;
   flex-direction: column;
@@ -103,6 +120,10 @@
   .title,
   .generatedGif h3 {
     color: #9575cd;
+  }
+
+  .checkboxLabel {
+    color: #ccc;
   }
 
   .generationInfo,
