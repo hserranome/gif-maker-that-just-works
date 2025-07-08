@@ -3,11 +3,10 @@ import { SizePreset } from "../../types";
 import styles from "./GifSettings.module.css";
 
 const presetSizes: SizePreset[] = [
-  { label: "400x400", width: 400, height: 400 },
-  { label: "480x480", width: 480, height: 480 },
-  { label: "640x640", width: 640, height: 640 },
-  { label: "800x600", width: 800, height: 600 },
-  { label: "1024x768", width: 1024, height: 768 },
+  { label: "28x28", width: 28, height: 28 },
+  { label: "56x56", width: 56, height: 56 },
+  { label: "112x112", width: 112, height: 112 },
+  { label: "500x500", width: 500, height: 500 },
 ];
 
 export function GifSettings() {
