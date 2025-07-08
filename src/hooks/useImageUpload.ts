@@ -38,6 +38,8 @@ export const useImageUpload = () => {
     const target = e.target as HTMLInputElement;
     if (target.files) {
       handleFiles(target.files);
+      // Clear the input value to allow the same file to be selected again
+      target.value = '';
     }
   };
 
