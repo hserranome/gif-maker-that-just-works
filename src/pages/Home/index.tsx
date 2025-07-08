@@ -16,11 +16,11 @@ export function Home() {
 				</div>
 				
 				<div className={styles.middlePanel}>
-					<GifGenerator />
+					<GifSettings />
 				</div>
 
 				<div className={styles.rightPanel}>
-					<GifSettings />
+					<GifGenerator />
 				</div>
 			</div>
 		</div>
