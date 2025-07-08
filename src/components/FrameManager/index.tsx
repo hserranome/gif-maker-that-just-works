@@ -1,14 +1,62 @@
 import { useFrameManagement } from '../../hooks/useFrameManagement';
 import styles from './FrameManager.module.css';
+import { useState, useEffect } from 'react';
 
 export function FrameManager() {
 	const {
 		frames,
 		globalDelay,
+		moveFrame,
 		resetFrameDelay,
 		setCustomDelay,
 		removeFrame
 	} = useFrameManagement();
+
+	const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+	const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+	const [tempFrames, setTempFrames] = useState(frames);
+
+	useEffect(() => {
+		if (draggedIndex === null) {
+			setTempFrames(frames);
+		}
+	}, [frames, draggedIndex]);
+
+	const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+		setDraggedIndex(index);
+		setTempFrames(frames);
+		e.dataTransfer.effectAllowed = 'move';
+	};
+
+	const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+		e.preventDefault();
+		if (draggedIndex === null) return;
+		
+		if (index !== dragOverIndex) {
+			setDragOverIndex(index);
+			// Create temporary reordered array for visual feedback
+			const newFrames = [...frames];
+			const [movedFrame] = newFrames.splice(draggedIndex, 1);
+			newFrames.splice(index, 0, movedFrame);
+			setTempFrames(newFrames);
+		}
+	};
+
+	const handleDragEnd = () => {
+		if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+			moveFrame(draggedIndex, dragOverIndex);
+		}
+		setDraggedIndex(null);
+		setDragOverIndex(null);
+		setTempFrames(frames);
+	};
+
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		handleDragEnd();
+	};
+
+	const currentFrames = draggedIndex !== null ? tempFrames : frames;
 
 	return (
 		<div className={styles.container}>
@@ -17,8 +65,26 @@ export function FrameManager() {
 				<p className={styles.noFrames}>No frames added yet</p>
 			) : (
 				<div className={styles.framesList}>
-					{frames.map((frame, index) => (
-						<div key={frame.id} className={styles.frameItem}>
+					{currentFrames.map((frame, index) => {
+						const originalIndex = frames.findIndex(f => f.id === frame.id);
+						const isDragging = draggedIndex === originalIndex;
+						const isDragOver = dragOverIndex === index;
+						
+						return (
+						<div 
+							key={frame.id} 
+							className={`${styles.frameItem} ${isDragging ? styles.dragging : ''} ${isDragOver ? styles.dragOver : ''}`}
+							onDragOver={(e) => handleDragOver(e, index)}
+							onDrop={handleDrop}
+						>
+							<div 
+								className={styles.dragHandle}
+								draggable
+								onDragStart={(e) => handleDragStart(e, originalIndex)}
+								onDragEnd={handleDragEnd}
+							>
+								<div className={styles.dragHandleLines}></div>
+							</div>
 							<button 
 								className={styles.removeButton}
 								onClick={() => removeFrame(frame.id)}
@@ -63,7 +129,8 @@ export function FrameManager() {
 								</div>
 							</div>
 						</div>
-					))}
+						);
+					})}
 				</div>
 			)}
 		</div>
