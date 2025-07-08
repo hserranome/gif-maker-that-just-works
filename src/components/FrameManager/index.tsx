@@ -5,7 +5,6 @@ export function FrameManager() {
 	const {
 		frames,
 		globalDelay,
-		moveFrame,
 		resetFrameDelay,
 		setCustomDelay,
 		removeFrame
@@ -20,13 +19,19 @@ export function FrameManager() {
 				<div className={styles.framesList}>
 					{frames.map((frame, index) => (
 						<div key={frame.id} className={styles.frameItem}>
+							<button 
+								className={styles.removeButton}
+								onClick={() => removeFrame(frame.id)}
+								aria-label={`Remove frame ${index + 1}`}
+							>
+								×
+							</button>
 							<div className={styles.framePreview}>
 								<img src={frame.image} alt={`Frame ${index + 1}`} />
 							</div>
 							<div className={styles.frameControls}>
 								<div className={styles.frameInfo}>
-									<span>Frame {index + 1}</span>
-									{frame.useGlobalDelay && <span className={styles.globalIndicator}>(Global)</span>}
+									<span>#{index + 1}</span>
 								</div>
 								<div className={styles.delayControl}>
 									<div className={styles.delayInputGroup}>
@@ -55,24 +60,6 @@ export function FrameManager() {
 											Global
 										</label>
 									</div>
-								</div>
-								<div className={styles.frameActions}>
-									{index > 0 && (
-										<button onClick={() => moveFrame(index, index - 1)}>
-											↑
-										</button>
-									)}
-									{index < frames.length - 1 && (
-										<button onClick={() => moveFrame(index, index + 1)}>
-											↓
-										</button>
-									)}
-									<button 
-										className={styles.removeButton}
-										onClick={() => removeFrame(frame.id)}
-									>
-										×
-									</button>
 								</div>
 							</div>
 						</div>
