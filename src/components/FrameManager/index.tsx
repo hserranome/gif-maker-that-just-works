@@ -4,14 +4,8 @@ import styles from "./FrameManager.module.css";
 import { useState, useEffect } from "react";
 
 export function FrameManager() {
-  const {
-    frames,
-    globalDelay,
-    moveFrame,
-    resetFrameDelay,
-    setCustomDelay,
-    removeFrame,
-  } = useFrameManagement();
+  const { frames, moveFrame, resetFrameDelay, setCustomDelay, removeFrame } =
+    useFrameManagement();
 
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
