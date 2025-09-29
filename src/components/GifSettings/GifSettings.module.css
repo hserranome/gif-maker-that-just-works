@@ -8,19 +8,6 @@
   font-size: 1.2rem;
 }
 
-.settingGroup {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: #f8f8f8;
-  border-radius: 6px;
-}
-
-.settingGroup h3 {
-  margin: 0 0 0.5rem;
-  color: #673ab8;
-  font-size: 1rem;
-}
-
 .presetButtons {
   display: flex;
   gap: 0.25rem;
@@ -28,7 +15,7 @@
   margin-bottom: 0.5rem;
 }
 
-.presetButtons button {
+.presetButton {
   padding: 0.25rem 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -38,8 +25,8 @@
   font-size: 0.8rem;
 }
 
-.presetButtons button:hover,
-.presetButtons button.active {
+.presetButton:hover,
+.presetButtonActive {
   background: #673ab8;
   color: white;
   border-color: #673ab8;
@@ -86,7 +73,7 @@
   border-radius: 4px;
 }
 
-.settingGroup select {
+.select {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #ddd;
@@ -103,25 +90,19 @@
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .title,
-  .settingGroup h3 {
-    color: #9575cd;
-  }
-
-  .settingGroup {
-    background: #2a2a2a;
-    color: #ccc;
-  }
-
   .sizeInput input,
   .delayControl input,
-  .settingGroup select {
+  .select {
     background: #2a2a2a;
     color: #ccc;
     border-color: #666;
   }
 
-  .presetButtons button {
+  .title {
+    color: #9575cd;
+  }
+
+  .presetButton {
     background: #2a2a2a;
     color: #ccc;
     border-color: #666;
