@@ -12,6 +12,7 @@
 
 .autoUpdateControl {
   text-align: left;
+  margin-bottom: 0.5rem;
 }
 
 .checkboxLabel {
@@ -29,7 +30,6 @@
 .generatorGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
 
 .generationInfo {

@@ -1,8 +1,8 @@
 :root {
   /* Adjust desktop panel widths by updating these values */
-  --home-left-column: 2fr;
-  --home-middle-column: 2.5fr;
-  --home-right-column: 3fr;
+  --home-left-column: 1fr;
+  --home-middle-column: 1fr;
+  --home-right-column: 1.5fr;
 }
 
 .container {

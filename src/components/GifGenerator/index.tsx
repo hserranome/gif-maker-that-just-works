@@ -9,9 +9,8 @@ export function GifGenerator() {
 
   return (
     <div className={styles.container}>
+      <h3 className={styles.title}>Generated GIF</h3>
       <div className={styles.generatedGif}>
-        <h3>Generated GIF</h3>
-
         {!generatedGif && !isGenerating && (
           <p className={styles.placeholder}>
             Generate a GIF to preview it here.
