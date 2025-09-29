@@ -3,47 +3,51 @@ import { useGifStore } from "../../store/gifStore";
 import styles from "./GifGenerator.module.css";
 
 export function GifGenerator() {
-  const settings = useGifStore((state) => state.settings);
-  const { downloadGif, isGenerating, generatedGif, framesCount, progress } =
-    useGifGeneration();
+	const settings = useGifStore((state) => state.settings);
+	const { downloadGif, isGenerating, generatedGif, framesCount, progress } =
+		useGifGeneration();
 
-  return (
-    <div className={styles.container}>
-      <h3 className={styles.title}>Generated GIF</h3>
-      <div className={styles.generatedGif}>
-        {!generatedGif && !isGenerating && (
-          <p className={styles.placeholder}>
-            Generate a GIF to preview it here.
-          </p>
-        )}
+	return (
+		<div>
+			<h3 className={styles.title}>Generated GIF</h3>
+			<div className={styles.generatedGif}>
+				{!generatedGif && !isGenerating && (
+					<p className={styles.placeholder}>
+						Generate a GIF to preview it here.
+					</p>
+				)}
 
-        {isGenerating && (
-          <>
-            <p className={styles.status}>Generating GIF...</p>
-            <div className={styles.progressBar}>
-              <div
-                className={styles.progressFill}
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          </>
-        )}
+				{isGenerating && (
+					<>
+						<p className={styles.status}>Generating GIF...</p>
+						<div className={styles.progressBar}>
+							<div
+								className={styles.progressFill}
+								style={{ width: `${progress}%` }}
+							></div>
+						</div>
+					</>
+				)}
 
-        {generatedGif && (
-          <>
-            <img src={generatedGif} alt="Generated GIF" />
-            <button className={styles.downloadButton} onClick={downloadGif}>
-              Download GIF
-            </button>
-            <div className={styles.generationInfo}>
-              <p>{framesCount} frames ready</p>
-              <p>
-                Size: {settings.width}×{settings.height}
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
+				{generatedGif && (
+					<>
+						<img src={generatedGif} alt="Generated GIF" />
+						<button
+							type="button"
+							className={styles.downloadButton}
+							onClick={downloadGif}
+						>
+							Download GIF
+						</button>
+						<div className={styles.generationInfo}>
+							<p>{framesCount} frames ready</p>
+							<p>
+								Size: {settings.width}×{settings.height}
+							</p>
+						</div>
+					</>
+				)}
+			</div>
+		</div>
+	);
 }

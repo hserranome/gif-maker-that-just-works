@@ -1,42 +1,43 @@
-import { useGifGeneration } from "../../hooks/useGifGeneration";
 import { useAutoGeneration } from "../../hooks/useAutoGeneration";
+import { useGifGeneration } from "../../hooks/useGifGeneration";
 import { useGifStore } from "../../store/gifStore";
 import { SettingsGroup } from "../SettingsGroup";
 import styles from "./GifGenerationControls.module.css";
 
 export function GifGenerationControls() {
-  const autoUpdate = useGifStore((state) => state.autoUpdate);
-  const setAutoUpdate = useGifStore((state) => state.setAutoUpdate);
-  const { generateGif, isGenerating, progress, framesCount } =
-    useGifGeneration();
+	const autoUpdate = useGifStore((state) => state.autoUpdate);
+	const setAutoUpdate = useGifStore((state) => state.setAutoUpdate);
+	const { generateGif, isGenerating, progress, framesCount } =
+		useGifGeneration();
 
-  // Keep auto-generation behavior tied to the generate button
-  useAutoGeneration(generateGif);
+	// Keep auto-generation behavior tied to the generate button
+	useAutoGeneration(generateGif);
 
-  return (
-    <div className={styles.container}>
-      <SettingsGroup
-        title="Generation Controls"
-        className={styles.generatorGroup}
-      >
-        <div className={styles.autoUpdateControl}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              checked={autoUpdate}
-              onChange={(e) => setAutoUpdate(e.currentTarget.checked)}
-            />
-            Auto-generate
-          </label>
-        </div>
-        <button
-          className={styles.generateButton}
-          onClick={generateGif}
-          disabled={framesCount === 0 || isGenerating}
-        >
-          {isGenerating ? `Generating... ${progress}%` : "Generate GIF"}
-        </button>
-      </SettingsGroup>
-    </div>
-  );
+	return (
+		<div className={styles.container}>
+			<SettingsGroup
+				title="Generation Controls"
+				className={styles.generatorGroup}
+			>
+				<div className={styles.autoUpdateControl}>
+					<label className={styles.checkboxLabel}>
+						<input
+							type="checkbox"
+							checked={autoUpdate}
+							onChange={(e) => setAutoUpdate(e.currentTarget.checked)}
+						/>
+						Auto-generate
+					</label>
+				</div>
+				<button
+					type="button"
+					className={styles.generateButton}
+					onClick={generateGif}
+					disabled={framesCount === 0 || isGenerating}
+				>
+					{isGenerating ? `Generating... ${progress}%` : "Generate GIF"}
+				</button>
+			</SettingsGroup>
+		</div>
+	);
 }

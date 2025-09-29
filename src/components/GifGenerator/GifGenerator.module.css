@@ -1,70 +1,67 @@
-.container {
-}
-
 .title {
-  color: #673ab8;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
+	color: #673ab8;
+	margin-bottom: 0.5rem;
+	font-size: 1.2rem;
 }
 
 .placeholder,
 .status {
-  color: #666;
-  text-align: center;
-  padding: 1rem;
+	color: #666;
+	text-align: center;
+	padding: 1rem;
 }
 
 .status {
-  font-weight: 600;
+	font-weight: 600;
 }
 
 .generatedGif {
-  text-align: center;
-  padding: 1rem;
-  background: #f8f8f8;
-  border-radius: 8px;
+	text-align: center;
+	padding: 1rem;
+	background: #f8f8f8;
+	border-radius: 8px;
 }
 
 .generatedGif h3 {
-  color: #673ab8;
-  margin-bottom: 1rem;
+	color: #673ab8;
+	margin-bottom: 1rem;
 }
 
 .generatedGif img {
-  max-width: 100%;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+	max-width: 100%;
+	border-radius: 8px;
+	margin-bottom: 1rem;
 }
 
 .downloadButton {
-  padding: 0.75rem 1.5rem;
-  background: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
+	padding: 0.75rem 1.5rem;
+	background: #28a745;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background 0.2s;
 }
 
 .downloadButton:hover {
-  background: #218838;
+	background: #218838;
 }
 
 .placeholder {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+	padding-top: 5rem;
+	padding-bottom: 5rem;
 }
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .generatedGif h3 {
-    color: #9575cd;
-  }
+	.generatedGif h3 {
+		color: #9575cd;
+	}
 
-  .placeholder,
-  .status,
-  .generatedGif {
-    background: #2a2a2a;
-    color: #ccc;
-  }
+	.placeholder,
+	.status,
+	.generatedGif {
+		background: #2a2a2a;
+		color: #ccc;
+	}
 }

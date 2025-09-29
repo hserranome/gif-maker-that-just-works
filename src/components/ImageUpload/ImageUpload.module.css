@@ -1,78 +1,78 @@
 .container {
-  /* Component container styles if needed */
+	/* Component container styles if needed */
 }
 
 .title {
-  color: #673ab8;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
+	color: #673ab8;
+	margin-bottom: 0.5rem;
+	font-size: 1.2rem;
 }
 
 .uploadArea {
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.3s;
-  cursor: pointer;
+	border: 2px dashed #ccc;
+	border-radius: 8px;
+	padding: 1.5rem;
+	text-align: center;
+	transition: all 0.3s;
+	cursor: pointer;
 }
 
 .uploadArea:hover {
-  border-color: #673ab8;
+	border-color: #673ab8;
 }
 
 .uploadArea.dragOver {
-  border-color: #673ab8;
-  background-color: #f8f6ff;
+	border-color: #673ab8;
+	background-color: #f8f6ff;
 }
 
 .uploadContent p {
-  margin: 0.5rem 0;
-  color: #666;
+	margin: 0.5rem 0;
+	color: #666;
 }
 
 .fileInput {
-  display: none;
+	display: none;
 }
 
 .fileButton {
-  display: inline-block;
-  background: #673ab8;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
+	display: inline-block;
+	background: #673ab8;
+	color: white;
+	padding: 0.75rem 1.5rem;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background 0.2s;
 }
 
 .fileButton:hover {
-  background: #5a2d91;
+	background: #5a2d91;
 }
 
 .fileInfo {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #666;
+	margin-top: 0.5rem;
+	font-size: 0.9rem;
+	color: #666;
 }
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .title {
-    color: #9575cd;
-  }
+	.title {
+		color: #9575cd;
+	}
 
-  .uploadArea {
-    border-color: #666;
-    background-color: #2a2a2a;
-  }
+	.uploadArea {
+		border-color: #666;
+		background-color: #2a2a2a;
+	}
 
-  .uploadArea.dragOver {
-    border-color: #9575cd;
-    background-color: #3a3a3a;
-  }
+	.uploadArea.dragOver {
+		border-color: #9575cd;
+		background-color: #3a3a3a;
+	}
 
-  .uploadContent p,
-  .fileInfo {
-    color: #ccc;
-  }
+	.uploadContent p,
+	.fileInfo {
+		color: #ccc;
+	}
 }
