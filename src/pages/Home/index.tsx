@@ -2,6 +2,7 @@ import { ImageUpload } from '../../components/ImageUpload';
 import { FrameManager } from '../../components/FrameManager';
 import { GifSettings } from '../../components/GifSettings';
 import { GifGenerator } from '../../components/GifGenerator';
+import { GifGenerationControls } from '../../components/GifGenerationControls';
 import styles from './Home.module.css';
 
 export function Home() {
@@ -17,6 +18,7 @@ export function Home() {
 				
 				<div className={styles.middlePanel}>
 					<GifSettings />
+					<GifGenerationControls />
 				</div>
 
 				<div className={styles.rightPanel}>

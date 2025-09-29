@@ -1,7 +1,7 @@
 :root {
   /* Adjust desktop panel widths by updating these values */
-  --home-left-column: 1fr;
-  --home-middle-column: 2fr;
+  --home-left-column: 2fr;
+  --home-middle-column: 2.5fr;
   --home-right-column: 3fr;
 }
 
@@ -29,7 +29,6 @@
 .rightPanel {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
 }
 
 /* Dark mode support */
