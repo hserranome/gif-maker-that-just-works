@@ -1,6 +1,7 @@
 import { useGifGeneration } from "../../hooks/useGifGeneration";
 import { useAutoGeneration } from "../../hooks/useAutoGeneration";
 import { useGifStore } from "../../store/gifStore";
+import { SettingsGroup } from "../SettingsGroup";
 import styles from "./GifGenerationControls.module.css";
 
 export function GifGenerationControls() {
@@ -14,7 +15,10 @@ export function GifGenerationControls() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.generatorContent}>
+      <SettingsGroup
+        title="Generation Controls"
+        className={styles.generatorGroup}
+      >
         <div className={styles.autoUpdateControl}>
           <label className={styles.checkboxLabel}>
             <input
@@ -32,7 +36,7 @@ export function GifGenerationControls() {
         >
           {isGenerating ? `Generating... ${progress}%` : "Generate GIF"}
         </button>
-      </div>
+      </SettingsGroup>
     </div>
   );
 }

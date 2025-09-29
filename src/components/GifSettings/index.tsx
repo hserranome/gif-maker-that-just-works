@@ -1,5 +1,6 @@
 import { useGifStore } from "../../store/gifStore";
 import { SizePreset } from "../../types";
+import { SettingsGroup } from "../SettingsGroup";
 import styles from "./GifSettings.module.css";
 
 const presetSizes: SizePreset[] = [
@@ -32,18 +33,20 @@ export function GifSettings() {
     <div className={styles.container}>
       <h2 className={styles.title}>GIF Settings</h2>
 
-      <div className={styles.settingGroup}>
-        <h3>Canvas Size</h3>
+      <SettingsGroup title="Canvas Size">
         <div className={styles.presetButtons}>
           {presetSizes.map((preset) => (
             <button
               key={preset.label}
-              className={
+              className={[
+                styles.presetButton,
                 settings.width === preset.width &&
                 settings.height === preset.height
-                  ? styles.active
-                  : ""
-              }
+                  ? styles.presetButtonActive
+                  : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               onClick={() => setPresetSize(preset)}
             >
               {preset.label}
@@ -76,12 +79,12 @@ export function GifSettings() {
             />
           </div>
         </div>
-      </div>
+      </SettingsGroup>
 
-      <div className={styles.settingGroup}>
-        <h3>Image Smoothing Quality</h3>
+      <SettingsGroup title="Image Smoothing Quality">
         <div className={styles.qualityControl}>
           <select
+            className={styles.select}
             value={settings.imageSmoothingQuality}
             onChange={(e) =>
               updateSetting(
@@ -95,10 +98,9 @@ export function GifSettings() {
             <option value="low">Low</option>
           </select>
         </div>
-      </div>
+      </SettingsGroup>
 
-      <div className={styles.settingGroup}>
-        <h3>Global Frame Delay</h3>
+      <SettingsGroup title="Global Frame Delay">
         <div className={styles.delayControl}>
           <input
             type="number"
@@ -110,7 +112,7 @@ export function GifSettings() {
           />
           <span>ms</span>
         </div>
-      </div>
+      </SettingsGroup>
     </div>
   );
 }
